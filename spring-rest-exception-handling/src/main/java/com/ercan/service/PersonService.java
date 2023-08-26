@@ -24,8 +24,9 @@ public class PersonService {
 
     public Person getPersonById(Long id){
         var person = persons.get(id);
-        return Optional.of(person)
-                .orElseThrow(()->new ApplicationException(
+        return Optional.ofNullable(person)
+                .orElseThrow(()->
+                        new ApplicationException(
                         "PERSON_NOT_FOUND",
                         String.format("Person with id=%d not found!",id),
                         HttpStatus.NOT_FOUND)
