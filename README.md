@@ -1,4 +1,4 @@
-# spring-boot-rest-api-pratices
+# spring-boot-pratices
 
 ## 1. spring-rest-exception-handling
    - Example Api Error Response:
