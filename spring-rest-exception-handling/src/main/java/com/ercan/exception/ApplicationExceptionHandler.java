@@ -19,7 +19,7 @@ import java.util.UUID;
 public class ApplicationExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(ApplicationException.class)
-    public ResponseEntity<?> handleApplicationException(final ApplicationException exception, final HttpServletRequest request) {
+    public ResponseEntity<?> handleApplicationException(ApplicationException exception, HttpServletRequest request) {
         var guid = UUID.randomUUID().toString();
         log.error(String.format("Error GUID=%s; Error Message: %s", guid, exception.getMessage()), exception);
 
@@ -39,7 +39,7 @@ public class ApplicationExceptionHandler extends ResponseEntityExceptionHandler 
     }
 
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<?> handleUnknownException(final Exception exception, final HttpServletRequest request) {
+    public ResponseEntity<?> handleUnknownException(Exception exception, HttpServletRequest request) {
         var guid = UUID.randomUUID().toString();
         log.error(String.format("Error GUID=%s; Error Message: %s", guid, exception.getMessage()), exception);
 
