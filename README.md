@@ -6,7 +6,7 @@
        {
         "guid": "8f421de8-b76f-4b5a-b711-fe4e74b84817",
         "errorCode": "PERSON_NOT_FOUND",
-        "message": "Person with 21 not found!",
+        "message": "Person with=21 not found!",
         "statusCode": 404,
         "statusName": "NOT_FOUND",
         "path": "/persons/21",
