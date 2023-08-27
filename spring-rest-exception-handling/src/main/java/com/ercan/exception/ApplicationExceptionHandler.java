@@ -7,7 +7,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
-import org.springframework.validation.FieldError;
+import org.springframework.http.converter.HttpMessageNotWritableException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -18,6 +18,7 @@ import org.springframework.web.method.annotation.MethodArgumentTypeMismatchExcep
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.ConstraintViolationException;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -25,6 +26,7 @@ import java.util.UUID;
 @RestControllerAdvice
 @Order(Ordered.HIGHEST_PRECEDENCE)
 public class ApplicationExceptionHandler extends ResponseEntityExceptionHandler {
+
 
     @ExceptionHandler(ApplicationException.class)
     public ResponseEntity<?> handleApplicationException(ApplicationException exception, HttpServletRequest request) {
@@ -36,6 +38,13 @@ public class ApplicationExceptionHandler extends ResponseEntityExceptionHandler 
     public ResponseEntity<?> handleMethodArgumentTypeMismatchException(MethodArgumentTypeMismatchException exception, HttpServletRequest request) {
 
         return buildResponseEntity(exception, HttpStatus.BAD_REQUEST, request);
+    }
+
+    @ExceptionHandler(javax.validation.ConstraintViolationException.class)
+    public ResponseEntity<?> handleConstraintViolation(javax.validation.ConstraintViolationException exception,WebRequest request){
+        ApiErrorResponse response = (ApiErrorResponse) buildResponseEntity(exception, HttpStatus.BAD_REQUEST, request).getBody();
+        response.addValidationErrors(exception.getConstraintViolations());
+        return buildResponseEntity(exception,HttpStatus.BAD_REQUEST,request);
     }
 
     @Override
@@ -51,13 +60,20 @@ public class ApplicationExceptionHandler extends ResponseEntityExceptionHandler 
     }
 
     @Override
+    protected ResponseEntity<Object> handleHttpMessageNotWritable(HttpMessageNotWritableException exception, HttpHeaders headers, HttpStatus status, WebRequest request) {
+        return (ResponseEntity<Object>) buildResponseEntity(exception, HttpStatus.INTERNAL_SERVER_ERROR, request);
+    }
+
+    @Override
     public ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException exception, HttpHeaders headers, HttpStatus status, WebRequest request) {
-        ApiErrorResponse response = (ApiErrorResponse) buildResponseEntity(exception, HttpStatus.BAD_REQUEST, request).getBody();
-        for (FieldError fieldError : exception.getBindingResult().getFieldErrors()) {
-            ValidationError validationError = new ValidationError(fieldError.getField(), fieldError.getRejectedValue(), fieldError.getDefaultMessage());
-            response.getErrors().add(validationError);
-        }
-        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+        ApiErrorResponse response = (ApiErrorResponse) buildResponseEntity(exception, status, request).getBody();
+        response.addValidationErrors(exception.getBindingResult().getFieldErrors());
+        response.addValidationError(exception.getBindingResult().getGlobalErrors());
+        return buildResponseEntity(response,status);
+    }
+
+    private ResponseEntity<Object> buildResponseEntity(ApiErrorResponse response, HttpStatus status){
+        return new ResponseEntity<>(response,status);
     }
 
     private ResponseEntity<?> buildResponseEntity(Exception exception, HttpStatus status, Object request) {
@@ -74,7 +90,6 @@ public class ApplicationExceptionHandler extends ResponseEntityExceptionHandler 
         if (exception instanceof ApplicationException) {
             response.setErrorCode(((ApplicationException) exception).getErrorCode());
         }
-
         if (request instanceof HttpServletRequest) {
             response.setPath(((HttpServletRequest) request).getRequestURI());
             response.setMethod(((HttpServletRequest) request).getMethod());
@@ -83,7 +98,7 @@ public class ApplicationExceptionHandler extends ResponseEntityExceptionHandler 
             response.setMethod(((ServletWebRequest) request).getRequest().getMethod());
         }
 
-        return new ResponseEntity<>(response, status);
+        return buildResponseEntity(response,status);
     }
 
 
