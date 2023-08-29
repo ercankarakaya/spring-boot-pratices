@@ -1,17 +1,13 @@
 package com.ercan.service;
 
 import com.ercan.exception.ApplicationException;
-import com.ercan.model.Person;
+import com.ercan.entity.Person;
 import com.ercan.repository.PersonRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.stream.Collectors;
 
 @Service
 public class PersonService {

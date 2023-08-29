@@ -1,4 +1,4 @@
-package com.ercan.exception;
+package com.ercan.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
