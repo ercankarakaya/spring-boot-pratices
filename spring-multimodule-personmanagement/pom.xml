@@ -9,6 +9,7 @@
         <module>repository</module>
         <module>controller</module>
         <module>email</module>
+        <module>application</module>
     </modules>
     <parent>
         <groupId>org.springframework.boot</groupId>
@@ -33,7 +34,6 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
-
         <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
