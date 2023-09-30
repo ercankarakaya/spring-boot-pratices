@@ -1,4 +1,4 @@
-# spring-multimodule-personmanagement
+# Spring Multi Maven Module
 - This project is an Spring Boot multimodule application with the following structure.
 - Project Structure
 
