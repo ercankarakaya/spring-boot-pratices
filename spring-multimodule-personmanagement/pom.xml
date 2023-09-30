@@ -9,6 +9,7 @@
         <module>repository</module>
         <module>controller</module>
         <module>email</module>
+        <module>application</module>
     </modules>
     <parent>
         <groupId>org.springframework.boot</groupId>
