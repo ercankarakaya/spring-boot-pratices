@@ -1,4 +1,4 @@
-# spring-rest-exception-handling
+# Exception Handling With Spring Rest
    - Example Api Error Response:
      - ```json
        {
